@@ -12,10 +12,17 @@ public class RemoveCharacter{
         {
             if(s.charAt(i)==a.charAt(0))
             {
-            s=s.substring(i+1,s.length());
-            i--;
-        }
+                if(i==0)
+                {
+                s=s.substring(i+1,s.length());
+                }
+                else
+                {
+                s=s.substring(0,i)+s.substring(i+1,s.length());
+                }
+             i--;
     }
+}
         System.out.println(s);
         sc.close();
     }
