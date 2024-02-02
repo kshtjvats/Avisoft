@@ -128,8 +128,8 @@ public class StudentRecord{
                 java=sc.nextInt();
                 dbms=sc.nextInt();
                 os=sc.nextInt();
-                if(java>100||java<0||os>100||os<0||dbms>100||dbms<0)
-                System.out.println("Cant make this! Try again");
+                if(java>100||java<0||os>100||os<0||dbms>100||dbms<0||isNameCorrect(name)==false)
+                System.out.println("Cant make this entry ! Try again");
                 else
                 st.add(new Student(rollNo,name,java,dbms,os));
             }
@@ -139,6 +139,15 @@ public class StudentRecord{
             break;
         }
     }
+}
+static boolean isNameCorrect(String name)
+{
+    for(int i=0;i<name.length();i++)
+                {
+                    if(name.charAt(i)<65||name.charAt(i)>126)
+                    return false;
+                }
+                return true;
 }
 }
 class Student{
