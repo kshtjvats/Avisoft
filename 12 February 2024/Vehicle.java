@@ -165,6 +165,7 @@ class Main {
                     break;
                 case 3:
                     int index = searchCar(cars,carIds);
+                    if(index!=-1)
                     cars.get(index).showDetails();
                     break;
                 case 4:
@@ -205,8 +206,8 @@ class Main {
                     }
                     else
                     break;
-                    break;
                 }
+                    break;
                 case 7:
                     int userIndex3 = searchUser(users);
                     if (rented.size() != 0) {
@@ -270,11 +271,13 @@ class Main {
     static int searchCar(ArrayList<Car> cars,Set<Integer>cid) {
         if (cars.size() == 0) {
             System.out.println("Car List Empty, No cars available!");
-            return 0;
+            return -1;
         }
+        else
+        {
         System.out.println("Enter car ID");
         int carId = sc.nextInt();
-        if(cid.contains(carId)==true)
+        if(cid.contains(carId))
         {
         int index = 0;
         for (index = 0; index < cars.size(); index++) {
@@ -289,6 +292,7 @@ class Main {
             return -1;
         }
     }
+}
     //Method to show all cars List
     static void DisplayAllCars(ArrayList<Car> cars)
     {
