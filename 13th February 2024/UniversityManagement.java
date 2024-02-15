@@ -174,7 +174,8 @@ class University {
             System.out.println("Enter 1 to add another Subject or press -1");
             x = sc.nextInt();
         }
-        if (SetOfRollNo.contains(rollNo) == false) {
+        if (SetOfRollNo.contains(rollNo) == false
+        ) {
             students.add(new Student(uniqueID, age, StudentName, rollNo, courses));
             SetOfRollNo.add(rollNo);
         } else
