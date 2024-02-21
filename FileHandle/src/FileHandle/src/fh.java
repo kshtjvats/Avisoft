@@ -102,50 +102,73 @@ class FileHandler {
     }
 }
 
- class Main {
+class Main {
     public static void main(String[] args) {
-        Scanner sc=new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
         Operations op = new Operations();
-        Set<String>uid=new HashSet<String>();
-        int c=0;
-        while(c!=-1)
-        {
-        System.out.println("ENTER A CHOICE : ");
-        System.out.println("1 : ADD A STUDENT ");
-        System.out.println("2 : DISPLAY A STUDENT ");
-        System.out.println("3 : DISPLAY ALL  STUDENTS");
-        c=sc.nextInt();
-        FileHandler f = new FileHandler();
-        switch (c) {
-            case 1:
-            try{
-            op.addStudent(uid);
-            f.serialize(op.students);
-            }
-            catch(Exception e)
-            {
-            System.err.println(e.getMessage());
-            }
-            break;
-            case 2:
-            System.out.println("Enter student id to search");
-            String id=sc.next();
-            try{
-            List<Student> deserializedStudents = f.deserialize();
-            int x=op.SearchStudent(deserializedStudents,id,uid);
-            deserializedStudents.get(x).getName();
-            }
-            catch(Exception e)
-            {
-            System.err.println(e.getMessage());
-            }
-            default:
-                break;
-        }
-        
+        Set<String> uid = new HashSet<String>();
 
-        // Deserialization Example
-       
+        // Deserialize the students list at the beginning
+        FileHandler f = new FileHandler();
+        List<Student> deserializedStudents = f.deserialize();
+
+        // Populate the uid set with IDs from deserializedStudents
+        for (Student student : deserializedStudents) {
+            uid.add(student.getSid());
+        }
+
+         int c = 0;
+        while (c != -1) {
+            System.out.println("ENTER A CHOICE : ");
+            System.out.println("1 : ADD A STUDENT ");
+            System.out.println("2 : DISPLAY A STUDENT ");
+            System.out.println("3 : DISPLAY ALL  STUDENTS");
+            c = sc.nextInt();
+
+            switch (c) {
+                case 1:
+                    try {
+                        op.addStudent(uid);
+                        f.serialize(op.students);
+                        // After adding a new student, update the deserializedStudents list
+                        deserializedStudents = f.deserialize();
+                    } catch (Exception e) {
+                        System.err.println(e.getMessage());
+                    }
+                    break;
+                case 2:
+                    try {
+                        // Access the deserialized list to display students
+                        System.out.println("Enter student id to search");
+                        String id = sc.next();
+                        int x = op.SearchStudent(deserializedStudents, id, uid);
+                        if (x != -1) {
+                            System.out.println("Student Found:");
+                            System.out.println("Name: " + deserializedStudents.get(x).getName() +
+                                    ", ID: " + deserializedStudents.get(x).getSid() +
+                                    ", Age: " + deserializedStudents.get(x).getAge());
+                        } else {
+                            System.out.println("Student not found.");
+                        }
+                    } catch (Exception e) {
+                        System.err.println(e.getMessage());
+                    }
+                    break;
+                case 3:
+                    try {
+                        System.out.println("All Students:");
+                        for (Student student : deserializedStudents) {
+                            System.out.println("Name: " + student.getName() +
+                                    ", ID: " + student.getSid() +
+                                    ", Age: " + student.getAge());
+                        }
+                    } catch (Exception e) {
+                        System.err.println(e.getMessage());
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
