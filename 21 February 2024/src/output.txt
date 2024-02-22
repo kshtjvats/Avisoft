@@ -1,4 +1,4 @@
-The employees with salary 11.0% above average are : 
+The employees with salary 50.0% above average are : 
 *****************************
 Name : Michael Hartstein
 Salary : 13000$
@@ -9,9 +9,6 @@ Salary : 10000$
 Name : Shelley Higgins
 Salary : 12008$
 *****************************
-Name : William Gietz
-Salary : 8300$
-*****************************
 Name : Steven King
 Salary : 24000$
 *****************************
@@ -21,36 +18,9 @@ Salary : 17000$
 Name : Lex De Haan
 Salary : 17000$
 *****************************
-Name : Alexander Hunold
-Salary : 9000$
-*****************************
 Name : Nancy Greenberg
 Salary : 12008$
 *****************************
-Name : Daniel Faviet
-Salary : 9000$
-*****************************
-Name : John Chen
-Salary : 8200$
-*****************************
-Name : Ismael Sciarra
-Salary : 7700$
-*****************************
-Name : Jose Manuel Urman
-Salary : 7800$
-*****************************
-Name : Luis Popp
-Salary : 6900$
-*****************************
 Name : Den Raphaely
 Salary : 11000$
-*****************************
-Name : Matthew Weiss
-Salary : 8000$
-*****************************
-Name : Adam Fripp
-Salary : 8200$
-*****************************
-Name : Payam Kaufling
-Salary : 7900$
 *****************************
