@@ -34,7 +34,7 @@ class LL {
         super(message);
     }
 }
-    void Slc() throws indexException { //function to accept and slice the string
+    void Slc() throws indexException { //function to accept and slice
     System.out.println("Enter a sentence");
     Scanner sc = new Scanner(System.in);
     String s = sc.nextLine();
