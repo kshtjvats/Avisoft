@@ -6,16 +6,16 @@ public class ArrayProduct {
     public static void arrayProducts(int n, int[] arr, int[] rarr) {
         // Calculate product of elements to the left of each element
         int product = 1;
-        for (int i = 0; i < n; i++) {
-            rarr[i] = product;
-            product *= arr[i];
+        for (int arrayIterator = 0; arrayIterator < n; arrayIterator++) {
+            rarr[arrayIterator] = product;
+            product *= arr[arrayIterator];
         }
 
         // Calculate product of elements to the right of each element and multiply with left product
         product = 1;
-        for (int i = n - 1; i >= 0; i--) {
-            rarr[i] *= product;
-            product *= arr[i];
+        for (int arrayIterator = n - 1; arrayIterator >= 0; arrayIterator--) {
+            rarr[arrayIterator] *= product;
+            product *= arr[arrayIterator];
         }
     }
 
@@ -31,8 +31,8 @@ public class ArrayProduct {
 
         // Prompt the user to enter the elements of the array
         System.out.print("Enter the elements of the array: ");
-        for (int i = 0; i < n; i++) {
-            arr[i] = scanner.nextInt();
+        for (int arrIterator = 0; arrIterator < n; arrIterator++) {
+            arr[arrIterator] = scanner.nextInt();
         }
 
         // Call the arrayProducts function to calculate product of elements at all positions
@@ -40,8 +40,8 @@ public class ArrayProduct {
 
         // Print the elements of the result array
         System.out.print("rarr: ");
-        for (int i = 0; i < n; i++) {
-            System.out.print(rarr[i] + " ");
+        for (int rarrIterator = 0; rarrIterator < n; rarrIterator++) {
+            System.out.print(rarr[rarrIterator] + " ");
         }
         System.out.println();
         
