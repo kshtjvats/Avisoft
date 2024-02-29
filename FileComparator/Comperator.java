@@ -1,5 +1,6 @@
 //imports
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -7,9 +8,11 @@ import java.util.Scanner;
 import java.util.Set;
 import java.time.*;
 import java.util.HashSet;
+import java.util.InputMismatchException;
 import java.util.Locale;
 import java.time.format.DateTimeFormatter;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 // Class to compare text files and generate a report for differences
@@ -23,14 +26,14 @@ class TextComparator {
     String line, line2; // Strings to store lines from the files
     String delimiter = "\\."; // Separator for splitting lines into sentences
     try {
-      BufferedReader br = new BufferedReader(new FileReader(filepath)); // Reader for first file
-      BufferedReader br2 = new BufferedReader(new FileReader(filepath1)); // Reader for second file
+      BufferedReader bufferReader = new BufferedReader(new FileReader(filepath)); // Reader for first file
+      BufferedReader bufferReader2 = new BufferedReader(new FileReader(filepath1)); // Reader for second file
       // Read lines from both files simultaneously
-      while ((line = br.readLine()) != null && (line2 = br2.readLine()) != null) {
+      while ((line = bufferReader.readLine()) != null && (line2 = bufferReader2.readLine()) != null) {
         String[] sentences = line.split(delimiter); // Split line into sentences
         String[] sentences2 = line2.split(delimiter); // Split line from second file into sentences
-        br.close(); // Close reader for first file
-        br2.close(); // Close reader for second file
+        bufferReader.close(); // Close reader for first file
+        bufferReader2.close(); // Close reader for second file
         // Iterate over sentences in each line
         for (int lineIterator = 0; lineIterator < sentences.length; lineIterator++) {
           String[] words = sentences[lineIterator].split(" "); // Split sentence into words
@@ -64,21 +67,24 @@ class TextComparator {
       String line, line2; // Strings to store lines from the files
       String delimiter = "\\."; // Separator for splitting lines into sentences
       try {
-        BufferedReader br = new BufferedReader(new FileReader(filepath)); // Reader for first file
-        BufferedReader br2 = new BufferedReader(new FileReader(filepath1)); // Reader for second file
+        BufferedReader bufferReader = new BufferedReader(new FileReader(filepath)); // Reader for first file
+        BufferedReader bufferReader2 = new BufferedReader(new FileReader(filepath1)); // Reader for second file
         try 
         {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy hh mm a", Locale.ENGLISH); // Formatter for current date and time
+        DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd MMM yyyy hh mm a", Locale.ENGLISH); // Formatter for current date and time
         LocalDateTime now = LocalDateTime.now(); // Get current date and time
-        System.out.println(dtf.format(now)); // Print current date and time
-        String path = "files/" + (String) dtf.format(now) + ".txt"; // Path for the report file
-
+        System.out.println(dateTimeFormat.format(now)); // Print current date and time
+        String path = "files/" + (String) dateTimeFormat.format(now) + ".txt"; // Path for the report file
         // Read lines from both files simultaneously
-        while ((line = br.readLine()) != null && (line2 = br2.readLine()) != null) {
+        while ((line = bufferReader.readLine()) != null && (line2 = bufferReader2.readLine()) != null) {
           String[] sentences = line.split(delimiter); // Split line into sentences
           String[] sentences2 = line2.split(delimiter); // Split line from second file into sentences
-          br.close();
-          br2.close(); //closing buffer readers
+          bufferReader.close();
+          bufferReader2.close(); //closing buffer readers
+          if((String) dateTimeFormat.format(now)==null) //throwing custom exception for not retrieving local date or time
+          {
+        throw new Exception("Cannot Retrieve Local Date/Time");
+          }
           // Write differences to the report file
           try (FileWriter writer = new FileWriter(path)) {
             writer.write("Line Number  Index   Actual  Expected\n"); // Header for the report
@@ -94,7 +100,7 @@ class TextComparator {
               }
             }
             System.out.println("File saved in folder as " + path); // Inform user about the saved report
-          } catch (IOException e) {
+          } catch (NoSuchFileException e) {
             // Handle IO exception
             System.err.println(e.getMessage());
           }
@@ -105,7 +111,7 @@ class TextComparator {
           System.err.println("Error: Unable to retrieve local date and time.");
           e.printStackTrace();
       }
-     }catch (IOException e) {
+     }catch (FileNotFoundException e) {
         // Handle IO exception
         e.printStackTrace();
       }
@@ -124,13 +130,14 @@ class CsvComparator {
     String csvSplitBy = ","; // Separator for splitting CSV fields
     int[] sz=getCSVDimensions(filepath); //finding size
     String[][] storage = new String[sz[0]][sz[1]]; // 2D array to store CSV data
-    try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
+    try (BufferedReader bufferReader = new BufferedReader(new FileReader(filepath))) {
       int[] dimensions = getCSVDimensions(filepath); // Get dimensions of the CSV file
       int c = 0; // Counter for rows
       // Read each line from the CSV file
-      while ((line = br.readLine()) != null) {
+      while ((line = bufferReader.readLine()) != null) {
         // Split the line into fields
         String[] data = line.split(csvSplitBy);
+
         // Store fields in the 2D array
         for (int i = 0; i < dimensions[1]; i++) {
           storage[c][i] = data[i];
@@ -144,13 +151,13 @@ class CsvComparator {
   }
 
   // Method to check if two CSV files have the same content
-  boolean isSame(String[][] file1, String[][] file2) {
+  boolean isSame(String[][] actual, String[][] expected) {
     boolean flag = true; // Flag to track if content is the same
     // Iterate over each cell of both CSV files
-    for (int rowIterator = 0; rowIterator < file1.length; rowIterator++) {
-      for (int columnIterator = 0; columnIterator < file1[0].length; columnIterator++) {
+    for (int rowIterator = 0; rowIterator < actual.length; rowIterator++) {
+      for (int columnIterator = 0; columnIterator < actual[0].length; columnIterator++) {
         // If corresponding cells in the files are different, set flag to false
-        if (!file1[rowIterator][columnIterator].equals(file2[rowIterator][columnIterator])) {
+        if (!actual[rowIterator][columnIterator].equals(expected[rowIterator][columnIterator])) {
           flag = false;
         }
       }
@@ -159,7 +166,7 @@ class CsvComparator {
   }
 
   // Method to compare two CSV files and generate a report highlighting differences
-  void CompareCsv(String[][] file1, String[][] file2) {
+  void CompareCsv(String[][] actual, String[][] expected) {
     System.out.println("Enter 1 to avoid one field during comparison");
     int c = sc.nextInt(); // User input to avoid a field during comparison
     int ch = -1; // Variable to store user's choice of field to avoid
@@ -167,41 +174,54 @@ class CsvComparator {
     if (c == 1) {
       System.out.println("Enter the field name to avoid during comparison");
       // Display field names for user to choose from
-      for (int i = 0; i < file1[0].length; i++) {
-        System.out.println((i + 1) + ": Omit " + file1[0][i]);
+      for (int i = 0; i < actual[0].length; i++) {
+        System.out.println((i + 1) + ": Omit " + actual[0][i]);
       }
+      try{
       ch = sc.nextInt(); // User input for field to avoid
+      if(ch>actual[0].length)
+      throw new Exception("Invalid Choice");
+      }
+      catch(Exception e)
+      {
+        System.err.println(e.getMessage());
+        return;
+      }
     }
     // If files have different content
-    if (!isSame(file1, file2)) {
+    if (!isSame(actual, expected)) {
       try{
-      DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MMM yyyy hh mm a", Locale.ENGLISH); // Formatter for current date and time
+      DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd MMM yyyy hh mm a", Locale.ENGLISH); // Formatter for current date and time
       LocalDateTime now = LocalDateTime.now(); // Get current date and time
-      System.out.println(dtf.format(now)); // Print current date and time
-      String path = "files/" + (String) dtf.format(now) + ".csv"; // Path for the report file
+      System.out.println(dateTimeFormat.format(now)); // Print current date and time
+      String path = "files/" + (String) dateTimeFormat.format(now) + ".csv"; // Path for the report file
+      if ((String)dateTimeFormat.format(now)==null)
+      {
+        throw new Exception("Cannot Retrieve local time/date");
+      }
       try (FileWriter writer = new FileWriter(path)) {
-        writer.write("Omitted field:" + file1[0][ch - 1] + "\n"); // Write omitted field to report
+        writer.write("Omitted field:" + actual[0][ch - 1] + "\n"); // Write omitted field to report
         // Iterate over rows of the CSV files
-        for (int rowIterator = -1; rowIterator < file1.length; rowIterator++) {
+        for (int rowIterator = -1; rowIterator < actual.length; rowIterator++) {
           // If it's the first row, write the header to the report
           if (rowIterator == -1) {
             writer.write("RowNumber,Expected,Actual\n");
             continue;
           } else {
             // Iterate over columns of the CSV files
-            for (int columnIterator = 0; columnIterator < file1[0].length; columnIterator++) {
+            for (int columnIterator = 0; columnIterator < actual[0].length; columnIterator++) {
               // If user chose to avoid a field and the current column is the one to avoid, skip it
               if (columnIterator == ch - 1 && ch > -1) {
                 continue;
               }
               // If corresponding cells in the files are different, write to report
-              if (!file1[rowIterator][columnIterator].equals(file2[rowIterator][columnIterator])) {
-                writer.write("Row:" + rowIterator + "," + file1[0][columnIterator] + ":" + file1[rowIterator][columnIterator] + "," + file1[0][columnIterator] + ":" + file2[rowIterator][columnIterator] + "\n");
+              if (!actual[rowIterator][columnIterator].equals(expected[rowIterator][columnIterator])) {
+                writer.write("Row:" + rowIterator + "," + actual[0][columnIterator] + ":" + actual[rowIterator][columnIterator] + "," + actual[0][columnIterator] + ":" + expected[rowIterator][columnIterator] + "\n");
               }
             }
           }
         }
-      } catch (IOException e) {
+      } catch (FileNotFoundException e) {
         // Handle IO exception
         System.err.println(e.getMessage());
       }
@@ -217,19 +237,19 @@ catch (Exception e) {
 
   // Method to get the dimensions (number of rows and columns) of a CSV file
   static int[] getCSVDimensions(String filePath) {
-    try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+    try (BufferedReader bufferReader = new BufferedReader(new FileReader(filePath))) {
       int numRows = 0; // Counter for rows
       int numCols = 0; // Counter for columns
       String line; // String to store each line from the CSV file
       int[] dim = new int[2]; // Array to store dimensions
       // Read the first line to determine the number of columns
-      if ((line = br.readLine()) != null) {
+      if ((line = bufferReader.readLine()) != null) {
         String[] columns = line.split(",");
         numCols = columns.length; // Set number of columns
         numRows++; // Increment row counter
       }
       // Read remaining lines to determine the number of rows
-      while ((line = br.readLine()) != null) {
+      while ((line = bufferReader.readLine()) != null) {
         numRows++; // Increment row counter
       }
       dim[0] = numRows; // Set number of rows
@@ -253,7 +273,14 @@ class Main {
     System.out.println("1 : Compare CSV Files");
     System.out.println("2 : Compare Text Files");
     System.out.println("1- : To exit!");
+    try{
     switchChoice=sc.nextInt();
+    }
+    catch(InputMismatchException e)
+    {
+      System.err.println("Invalid entry");
+      main(args);
+    }
     //switch case to handle text or csv file exclusively based on input prefrence
     switch(switchChoice)
     {
@@ -265,20 +292,20 @@ class Main {
       String path2 = sc.next();
       // Validate file names
       if (!fileNames.contains(path1) || !fileNames.contains(path2)) {
-        throw new IOException("Invalid file name, file does not exist");
+        throw new NoSuchFileException("Invalid file name, file does not exist");
       }
 
       // Validate file extensions
       if (!path1.contains(".csv") || !path2.contains(".csv")) {
-        throw new IOException("Invalid extension!");
+        throw new NoSuchFileException("Invalid extension!");
       }
     // Create instances of comparators
       CsvComparator obj = new CsvComparator();
       // Read CSV files and perform comparison
-      String[][] file1 = obj.csv(path1);
-      String[][] file2 = obj.csv(path2);
-      obj.CompareCsv(file1, file2); // Compare CSV files
-    } catch (IOException e) {
+      String[][] actual = obj.csv(path1);
+      String[][] expected = obj.csv(path2);
+      obj.CompareCsv(actual, expected); // Compare CSV files
+    } catch (NoSuchFileException e) {
       System.err.println(e.getMessage());
     }
     break;
@@ -290,18 +317,18 @@ class Main {
         String path2 = sc.next();
         // Validate file names
         if (!fileNames.contains(path1) || !fileNames.contains(path2)) {
-          throw new IOException("Invalid file name, file does not exist");
+          throw new NoSuchFileException("Invalid file name, file does not exist");
         }
   
         // Validate file extensions
         if (!path1.contains(".txt") || !path2.contains(".txt")) {
-          throw new IOException("Invalid extension!");
+          throw new NoSuchFileException("Invalid extension!");
         }
       // Create instances of comparators
         TextComparator obj=new TextComparator();
         // Read text files and perform comparison
         obj.CompareText(path2, path1);
-      } catch (IOException e) {
+      } catch (NoSuchFileException e) {
         System.err.println(e.getMessage());
       }
       break;
@@ -328,7 +355,7 @@ class Main {
         .map(fileName -> "files/" + fileName)
         .forEach(fileNames::add);
     } catch (IOException e) {
-      e.printStackTrace();
+      System.err.println("Directory not found");;
     }
     return fileNames; // Return set of file names
   }

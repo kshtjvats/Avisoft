@@ -55,6 +55,14 @@ public class Main {
            System.out.println("ifsc:"+hdfcAccounts[1].getIfsc());
            System.out.println("Acc. no."+hdfcAccounts[1].getaccountNumber());
 
+           System.out.println("name:"+sbiAccounts[1].getName());
+           System.out.println("Balance:"+sbiAccounts[1].getBalance());
+           System.out.println("Card:"+sbiAccounts[1].getCardNumber());
+           System.out.println("pin:"+sbiAccounts[1].getPin());
+           System.out.println("ifsc:"+sbiAccounts[1].getIfsc());
+           System.out.println("Acc. no."+sbiAccounts[1].getaccountNumber());
+
+
            
            char choice;
            do{
