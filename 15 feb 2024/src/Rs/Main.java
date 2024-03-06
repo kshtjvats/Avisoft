@@ -18,7 +18,7 @@ public class Main {
         switch (c) { 
             case 1:
                 try{
-                   r.AddFlight();
+                   r.addFlight();
                 }
                 catch(ReservationException e)
                 {
@@ -27,7 +27,7 @@ public class Main {
                 break;
             case 2:
             try{
-                r.SearchFlight();
+                r.searchFlight();
              }
              catch(ReservationException e)
              {
