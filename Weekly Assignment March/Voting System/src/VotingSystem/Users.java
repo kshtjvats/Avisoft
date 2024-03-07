@@ -26,6 +26,10 @@ void SetPassword(String Password)
 {
     this.password=Password;
 }
+String getPassword()
+{
+    return password;
+}
 String getName()
 {
     return name;
@@ -95,7 +99,9 @@ List<Users>readRegisteredUsers(String filepath) {
     return registeredUsers;
 }
 }
+
 class Main{
+    Scanner scanner=new Scanner(System.in);
     public static void main(String[] args) {
         UserRegistration u=new UserRegistration();
         u.checkForCredentials();
@@ -104,11 +110,40 @@ class Main{
         List<Candidate>c=new ArrayList<Candidate>();
         Admin a=new Admin();
         a.addCandidate(ls);
-        /*System.out.println("Registered Users -:");
-        for(Users us:ls)
+        
+    }
+    void VoterLogin(List<Users>ls,List<Candidate>c)
+    {
+        System.out.println("Enter your registered UID");
+        String uid=scanner.next();
+        int flag=-1;
+        for(Users u:ls)
         {
-        us.showUserDetails();
-
-        }*/
+            if(u.getUserId().equals(uid))
+            {
+                flag=1;
+                break;
+            }
+        }
+        if(flag==0)
+        System.out.println("UID Not Registered");
+        else
+        {
+            System.out.println("Enter Password");
+            String password=scanner.next();
+            for(Users u:ls)
+            {
+            if(u.getPassword().equals(password))
+            {
+                System.out.println("Login Succesful!");
+                u.Vote(c);
+            }
+            else
+            {
+                System.out.println("Incorrect Password!");
+                VoterLogin(ls, c);
+            }
+        }
+        }
     }
 }
