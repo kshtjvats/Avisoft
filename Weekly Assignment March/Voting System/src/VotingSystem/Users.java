@@ -14,7 +14,7 @@ class UserManual
 class Users 
 {
 Scanner scanner=new Scanner(System.in);
-private String name,password,uniqueId,dateOfBirth,voteSymbol;
+private String name,password,uniqueId,dateOfBirth,voteSymbol="null";
 Users(String name,String password,String  uniqueId,String dateOfBirth)
 {
     this.name=name;
@@ -47,6 +47,10 @@ void setVotingSymbol(String voteSymbol)
 {
     this.voteSymbol=voteSymbol;
 }
+String getVotingSymbol()
+{
+    return voteSymbol;
+}
 void showUserDetails()
 {
     System.out.println("***************************");
@@ -57,6 +61,8 @@ void showUserDetails()
 }
 void Vote(List<Candidate>candidates)
 {
+    if(getVotingSymbol().equals("null"))
+    {
     if(candidates.size()==0)
     {
     System.out.println("Voting not Live");
@@ -69,6 +75,9 @@ void Vote(List<Candidate>candidates)
     System.out.println("Enter the voting symbol to cast Vote");
     String voteSymbol=scanner.next();
     setVotingSymbol(voteSymbol);
+}
+else
+System.out.println("Already Voted!");
 }
 }
 List<Users>readRegisteredUsers(String filepath) {
@@ -101,7 +110,7 @@ List<Users>readRegisteredUsers(String filepath) {
 }
 
 class Main{
-    Scanner scanner=new Scanner(System.in);
+    static Scanner scanner=new Scanner(System.in);
     public static void main(String[] args) {
         UserRegistration u=new UserRegistration();
         u.checkForCredentials();
@@ -109,10 +118,20 @@ class Main{
         List<Users>ls=r.readRegisteredUsers("src/VotingSystem/VoterList.csv");
         List<Candidate>c=new ArrayList<Candidate>();
         Admin a=new Admin();
-        a.addCandidate(ls);
-        
+        c=a.addCandidate(ls);
+        int choice=0;
+        while(choice!=-1)
+        {
+        VoterLogin(ls, c);
+        System.out.println("Enter -1 to quit or any other key to vote ");
+        choice=scanner.nextInt();
+        }
+        for(Users user:ls)
+        {
+        System.out.println(user.getName() +"Voted for symbol "+user.getVotingSymbol());
+        }
     }
-    void VoterLogin(List<Users>ls,List<Candidate>c)
+    static void VoterLogin(List<Users>ls,List<Candidate>c)
     {
         System.out.println("Enter your registered UID");
         String uid=scanner.next();
@@ -131,19 +150,22 @@ class Main{
         {
             System.out.println("Enter Password");
             String password=scanner.next();
+            int flagForPassword=-1;
             for(Users u:ls)
             {
             if(u.getPassword().equals(password))
             {
                 System.out.println("Login Succesful!");
+                flagForPassword=0;
                 u.Vote(c);
+                break;
             }
-            else
+        }
+            if(flagForPassword==-1)
             {
                 System.out.println("Incorrect Password!");
-                VoterLogin(ls, c);
             }
         }
         }
     }
-}
+

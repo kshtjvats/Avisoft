@@ -54,7 +54,9 @@ public class UserRegistration {
                     System.out.println("Enter your password (Your Password is your D.O.B of format ddMmYYYY):");
                     String password = scanner.next();
                     int flag=0;
-                    if (password.equals(credentialArray[index][1]) && ageCalculator(password) >= 18) {
+                    if (password.equals(credentialArray[index][1])){
+                        if(ageCalculator(password) >= 18)
+                        {
                         System.out.println("Login Successful!");
                         System.out.println("Enter your Name:");
                         credentialArray[index][2] = scanner.next();
@@ -67,7 +69,13 @@ public class UserRegistration {
                         if(flag==1)
                         registeredUsers.add(uniqueId);
                         break;
-                    } else {
+                    }
+                    else
+                    {
+                    System.out.println("Cannot Register as your age is less than 18");
+                    break;
+                    }
+                 } else {
                         if (++counter == 3) {
                             blockedUids.add(uniqueId);
                             System.out.println("UID Blocked");
@@ -128,7 +136,7 @@ public class UserRegistration {
 
     // Method to calculate age from date of birth
     int ageCalculator(String dobString) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMMyyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dMMMuuuu");
         LocalDate dob = LocalDate.parse(dobString, formatter);
         LocalDate currentDate = LocalDate.now();
         Period period = Period.between(dob, currentDate);
