@@ -14,9 +14,9 @@ public class UserRegistration {
     CSVParser parser=new CSVParser();
     Map<String,String>credentials=parser.convertCsvToMap("src/VotingSystem/UserData.csv");
     // Method to check user credentials
-    void checkForCredentials() {
+    void checkForCredentials(int csvCounter) {
         int choice = 0;
-        int csvCounter = 0; // Counter to track if VoterList.csv is created or not
+        // Counter to track if VoterList.csv is created or not
         Set<String> blockedUids = new HashSet<>(); // Set to store blocked UIDs
         Set<String> registeredUsers = new HashSet<>(); // Set to store registered UIDs
         String[][] credentialArray = new String[credentials.size()][3]; // 2D array to hold credentials

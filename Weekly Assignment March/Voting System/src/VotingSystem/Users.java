@@ -61,6 +61,7 @@ void showUserDetails()
 }
 void Vote(List<Candidate>candidates)
 {
+    List<String>VotingSymbols=new ArrayList<String>();
     if(getVotingSymbol().equals("null"))
     {
     if(candidates.size()==0)
@@ -71,13 +72,33 @@ void Vote(List<Candidate>candidates)
     for(Candidate candidate:candidates)
     {
         candidate.showCandidateDetails();
+        VotingSymbols.add(candidate.getVotingSymbol());
     }
     System.out.println("Enter the voting symbol to cast Vote");
     String voteSymbol=scanner.next();
+    if(VotingSymbols.contains(voteSymbol))
+    {
     setVotingSymbol(voteSymbol);
-}
+    int index=0;
+    for(Candidate candidate:candidates)
+    {
+        if(candidate.getVotingSymbol().equals(voteSymbol))
+        break;
+        else
+        index++;
+    }
+    candidates.get(index).IncrementVote();
+    }
+    else
+    System.out.println("Invalid Vote ,Logging Out!");
+    }
 else
 System.out.println("Already Voted!");
+System.out.println("LIVE VOTE COUNT:");
+for(Candidate candidate:candidates)
+    {
+        System.out.println(candidate.getName()+":"+candidate.getVoteCount());
+    }
 }
 }
 List<Users>readRegisteredUsers(String filepath) {
@@ -109,63 +130,5 @@ List<Users>readRegisteredUsers(String filepath) {
 }
 }
 
-class Main{
-    static Scanner scanner=new Scanner(System.in);
-    public static void main(String[] args) {
-        UserRegistration u=new UserRegistration();
-        u.checkForCredentials();
-        UserManual r=new UserManual();
-        List<Users>ls=r.readRegisteredUsers("src/VotingSystem/VoterList.csv");
-        List<Candidate>c=new ArrayList<Candidate>();
-        Admin a=new Admin();
-        c=a.addCandidate(ls);
-        int choice=0;
-        while(choice!=-1)
-        {
-        VoterLogin(ls, c);
-        System.out.println("Enter -1 to quit or any other key to vote ");
-        choice=scanner.nextInt();
-        }
-        for(Users user:ls)
-        {
-        System.out.println(user.getName() +"Voted for symbol "+user.getVotingSymbol());
-        }
-    }
-    static void VoterLogin(List<Users>ls,List<Candidate>c)
-    {
-        System.out.println("Enter your registered UID");
-        String uid=scanner.next();
-        int flag=-1;
-        for(Users u:ls)
-        {
-            if(u.getUserId().equals(uid))
-            {
-                flag=1;
-                break;
-            }
-        }
-        if(flag==0)
-        System.out.println("UID Not Registered");
-        else
-        {
-            System.out.println("Enter Password");
-            String password=scanner.next();
-            int flagForPassword=-1;
-            for(Users u:ls)
-            {
-            if(u.getPassword().equals(password))
-            {
-                System.out.println("Login Succesful!");
-                flagForPassword=0;
-                u.Vote(c);
-                break;
-            }
-        }
-            if(flagForPassword==-1)
-            {
-                System.out.println("Incorrect Password!");
-            }
-        }
-        }
-    }
+
 

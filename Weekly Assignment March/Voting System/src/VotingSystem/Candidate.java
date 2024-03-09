@@ -2,7 +2,7 @@ package VotingSystem;
 
 public class Candidate {
     private String name,uniqueId;
-    private int age;
+    private int age,votes=0;
     private String VotingSymbol="";
     Candidate(String name,String  uniqueId,int age)
     {
@@ -21,6 +21,14 @@ int getAge()
 String getUserId()
 {
     return uniqueId;
+}
+void IncrementVote()
+{
+    this.votes++;
+}
+int getVoteCount()
+{
+    return votes;
 }
 String getName()
 {
