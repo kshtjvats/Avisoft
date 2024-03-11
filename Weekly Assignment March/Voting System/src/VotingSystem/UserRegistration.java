@@ -215,7 +215,10 @@ public class UserRegistration {
                     if (user.getSecretQnAnswer().equals(ans))
                         blockedCredentials.remove(uid);
                     else
+                    {
+                        System.out.println("Incorrect");
                         return;
+                    }
                     break;
                 }
             }
@@ -344,7 +347,7 @@ public class UserRegistration {
                     System.out.println("Login Successful!");
                     flagForPassword = 0;
                     user.Vote(candidateList);
-                    break;
+                    return;
                 }
             }
             if (flagForPassword == -1) {

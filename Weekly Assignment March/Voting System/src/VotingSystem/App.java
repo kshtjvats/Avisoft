@@ -41,7 +41,6 @@ class App {
         // Counter for registered users
         int counter = 0;
 
-        try {
             // Loop for application choices
             while (ApplicationChoice != 3) {
                 // Displaying options for the user
@@ -53,9 +52,22 @@ class App {
                 try {
                     // Reading user's choice
                     ApplicationChoice = scanner.nextInt();
-                    // Handling negative number exception
                     if (ApplicationChoice < 0)
-                        throw new NegativeNumberException("Negative Numbers Not Allowed");
+                    throw new NegativeNumberException("Negative Numbers Not Allowed");
+                }
+                catch(InputMismatchException inputMismatchException)
+                {
+                    System.err.println("Invalid entry type");
+                    scanner.nextLine();
+                }
+                catch(NegativeNumberException negativeNumberException)
+                {
+                    System.err.println("Negative numbers not allowed");
+                    scanner.nextLine();
+                }
+                    // Handling negative number exception
+
+                   
 
                     // Switch case based on user's choice
                     switch (ApplicationChoice) {
@@ -69,11 +81,24 @@ class App {
                                 System.out.println("3 : Change Password");
                                 System.out.println("4 : Recover Blocked ID");
                                 System.out.println("5 : Exit to Main menu");
+                                try{
                                 choiceForUser = scanner.nextInt();
-                                // Handling negative number exception
                                 if (choiceForUser < 0)
-                                    throw new NegativeNumberException("Negative numbers not allowed");
-
+                                throw new NegativeNumberException("Negative numbers not allowed");
+                                }
+                                catch(InputMismatchException inputMismatchException)
+                                {
+                                    System.err.println("Invalid input");
+                                    scanner.nextLine();
+                                }
+                                catch(NegativeNumberException negativeNumberException)
+                                 {
+                                 System.err.println("Negative numbers not allowed");
+                                scanner.nextLine();
+                                }
+                                // Handling negative number exception
+                                
+                                
                                 // Switch case based on user's submenu choice
                                 switch (choiceForUser) {
                                     case 1:
@@ -121,10 +146,23 @@ class App {
                                     System.out.println("6 : Show Elected Candidates");
                                     System.out.println("7 : Unblock a UID");
                                     System.out.println("8 : Exit");
+                                    try{
                                     choiceForAdmin = scanner.nextInt();
+                                    if (choiceForAdmin < 0)
+                                    throw new NegativeNumberException("Negative Numbers not allowed");
+                                    }
+                                    catch(InputMismatchException inputMismatchException)
+                                    {
+                                        System.err.println("Invalid input");
+                                        scanner.nextLine();
+                                    }
+                                    catch(NegativeNumberException negativeNumberException)
+                                     {
+                                     System.err.println("Negative numbers not allowed");
+                                    scanner.nextLine();
+                                    }
                                     // Handling negative number exception
-                                if (choiceForAdmin < 0)
-                                throw new NegativeNumberException("Negative Numbers not allowed");
+                                
                                     // Switch case based on admin's submenu choice
                                     switch (choiceForAdmin) {
                                         case 1:
@@ -186,17 +224,8 @@ class App {
                         default:
                             break;
                     }
-                } catch (NegativeNumberException negativeNumberException) {
-                    // Handling negative number exception
-                    System.err.println(negativeNumberException.getMessage());
+                } 
                 }
             }
-        } catch (InputMismatchException inputMismatchException) {
-            // Handling invalid input exception
-            System.err.println("Invalid entry , you are trying to enter an invalid input");
-            scanner.nextLine();
-            // Restarting main method
-            main(args);
-        }
-    }
-}
+        
+
