@@ -1,13 +1,18 @@
 package VotingSystem;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
-
-import VotingSystem.UserManual.Users;
-
+import java.util.Set;
 public class Admin {
+Set<String>AddedCandidates=new HashSet<>();
+Set<String>takenSymbols=new HashSet<>();
+List<Candidate>CandidateList=new ArrayList<Candidate>();
 private String id="ASadmin",password="Avisoft",votingSymbol="null";
+Set<String>symbolsforVoting=new HashSet<>(Arrays.asList("@","#","$","%","*","^"));
 String getPassword()
 {
     return password;
@@ -39,8 +44,10 @@ void AdminsVote(List<Candidate>candidates)
         candidate.showCandidateDetails();
         VotingSymbols.add(candidate.getVotingSymbol());
     }
+    
     System.out.println("Enter the voting symbol to cast Vote");
     String voteSymbol=scanner.next();
+    
     if(VotingSymbols.contains(voteSymbol))
     {
     setSymbol(voteSymbol);
@@ -77,23 +84,95 @@ boolean adminLogin()
     return false;
 }
 Scanner scanner=new Scanner(System.in);
+
 List<Candidate> addCandidate(List<Users>user)
 {
-List<Candidate>CandidateList=new ArrayList<Candidate>();
+System.out.println("Enter UID to add a Candidate");
+String uid=scanner.next();
+if(!AddedCandidates.contains(uid))
+{
+int flag=0,index=0;
 for(Users u:user)
 {
-    u.showUserDetails();
-    System.out.println("Enter 1 to add as Candidate");
-    int choice=scanner.nextInt();
-    if(choice==1)
-    {
-        Candidate cand=new Candidate(u.getName(),u.getUserId(),u.getAge());
-        System.out.println("Enter a voting symbol for this Candidate");
-        String sym=scanner.next();
-        cand.setSymbol(sym);
-        CandidateList.add(cand);
-    }
+if(u.getUserId().equals(uid))
+{
+    flag=1;
+    break;
 }
+index++;
+}
+if(flag==0)
+{
+    System.out.println("No such user present");
+    return CandidateList;
+}
+Candidate cand=new Candidate(user.get(index).getName(),user.get(index).getUserId(),user.get(index).getAge());
+System.out.println("Enter a voting symbol for this Candidate");
+String symbol=scanner.next();
+if(!symbolsforVoting.contains(symbol))
+System.out.println("Choosing an invalid symbol");
+else
+{
+if(!takenSymbols.contains(symbol))
+{
+cand.setSymbol(symbol);
+CandidateList.add(cand);
+AddedCandidates.add(uid);
+takenSymbols.add(symbol);
+System.out.println("Candidate added to voting list");
+}
+else
+System.out.println("Symbol already taken up");
+}
+}
+else
+System.out.println("Already Registered!");
 return CandidateList;
+}
+void removeFromVotingList(List<Candidate>candidateList)
+{
+if(candidateList.size()==0)
+{
+    System.out.println("Voter List Empty!");
+    return;
+}
+System.out.println("Enter the Unique ID of candidate to be removed");
+String uid=scanner.next();
+int index=0,flag=0;
+for(Candidate candidate:candidateList)
+{
+if(candidate.getUserId().equals(uid))
+{
+flag=1;
+break;
+}
+else
+index++;
+}
+if(flag==1)
+{
+    takenSymbols.remove(candidateList.get(index).getVotingSymbol());
+    candidateList.remove(index);
+    AddedCandidates.remove(uid);
+}
+}
+void unblockUid(Set<String>blockedUid)
+{
+    try{
+    System.out.println("Enter the uid to be unblocked");
+    String uid=scanner.next();
+    if(blockedUid.contains(uid))
+    {
+    blockedUid.remove(uid);
+    System.out.println("UID Unblocked!");
+    }
+    else
+    System.out.println("No such uid present");
+}
+catch(InputMismatchException inputMismatchException)
+{
+    System.err.println("Invalid input type");
+    return;
+}
 }
 }

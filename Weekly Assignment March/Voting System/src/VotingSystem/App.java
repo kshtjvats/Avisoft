@@ -1,49 +1,76 @@
 package VotingSystem;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+class NegativeNumberException extends Exception
+{
+NegativeNumberException(String message)
+{
+    super(message);
+}
+}
 
-import VotingSystem.UserManual.Users;
 class App{
+    UserRegistration u=new UserRegistration();
     static Scanner scanner=new Scanner(System.in);
-    public static void main(String[] args) {
-        UserRegistration u=new UserRegistration();
-        UserManual r=new UserManual();
-        List<Users>ls=r.readRegisteredUsers("src/VotingSystem/VoterList.csv");
-        List<Candidate>c=new ArrayList<Candidate>();
+    public static void main(String[] args)throws NegativeNumberException  {
+        UserRegistration userRegistration=new UserRegistration();
+        Users user=new Users(null, null, null, null,null);
+        List<Users>VoterList=user.readRegisteredUsers("src/VotingSystem/VoterList.csv");
+        List<Candidate>candidateList=new ArrayList<Candidate>();
         List<Candidate>LiveList=new ArrayList<Candidate>();
+        int status=0;
         Admin a=new Admin();
         int ApplicationChoice=0;
         int counter=0;
-        while(ApplicationChoice!=3)
+        try{
+        while(ApplicationChoice!=4)
         {
         System.out.println("Enter a choice");
         System.out.println("1 : User Panel");
         System.out.println("2 : Admin Panel");
         System.out.println("3 : To exit");
+        try{
         ApplicationChoice=scanner.nextInt();
+        if(ApplicationChoice<0)
+        throw new NegativeNumberException("Negative Numbers Not Allowed");
         switch (ApplicationChoice) {
             case 1:
             int choiceForUser=0;
-            while(choiceForUser!=3)
+            while(choiceForUser!=5)
             {
                 System.out.println(" Enter a choice : ");
                 System.out.println("1 : Register For Voting");
                 System.out.println("2 : Cast Vote");
-                System.out.println("3 : Exit to Main menu");
+                System.out.println("3 : Change Password");
+                System.out.println("4 : Recover Blocked ID");
+                System.out.println("5 : Exit to Main menu");
                 choiceForUser=scanner.nextInt();
+                if(choiceForUser<0)
+                throw new NegativeNumberException("Negative numbers not allowed");
                 switch (choiceForUser) {
                     case 1:
-                    u.checkForCredentials(counter);
-                    ls=r.readRegisteredUsers("src/VotingSystem/VoterList.csv");
+                    if(status!=1)
+                    {
+                    userRegistration.checkForCredentials(counter);
+                    VoterList=user.readRegisteredUsers("src/VotingSystem/VoterList.csv");
                     counter++;
+                    }
+                    else
+                    System.out.println("Cannot Register as Voting has started");
                     break;
                     case 2:
                     if(counter>=1)
-                    VoterLogin(ls,LiveList);
+                    userRegistration.voterLogin(VoterList,LiveList);
                     else
                     System.out.println("No active registered users");
                     break;
+                    case 3:
+                    userRegistration.changePassword(VoterList);
+                    break;
+                    case 4:
+                    userRegistration.RecoverAccount(VoterList);
                     default:
                         break;
                 }  
@@ -53,23 +80,43 @@ class App{
             if(a.adminLogin())
             {
             int choiceForAdmin=0;
-            while (choiceForAdmin!=6){
+            if(choiceForAdmin<0)
+            throw new NegativeNumberException("Negative Numbers not allowed");
+            while (choiceForAdmin!=8){
             System.out.println(" Enter a choice : ");
             System.out.println("1 : Elect Candidates");
             System.out.println("2 : Remove a Candidate");
             System.out.println("3 : Set Voting Live");
             System.out.println("4 : Cast My Vote");
             System.out.println("5 : End Election and declare resuts");
-            System.out.println("6 : Exit to Main menu");
+            System.out.println("6 : Show Elected Candidates");
+            System.out.println("7 : Unblock a UID");
+            System.out.println("8 : Exit");
             choiceForAdmin=scanner.nextInt();
             switch (choiceForAdmin) {
-
             case 1:
-            c=a.addCandidate(ls); 
+            if(status==0)
+            candidateList=a.addCandidate(VoterList); 
+            else
+            System.out.println("Cannot Elect as Voting has started");
+            break;
+            case 2:
+            if(status==0)
+            a.removeFromVotingList(candidateList);
+            else
+            System.out.println("Cannot Elect as Voting has started");
             break;
             case 3:
-            if(c.size()!=0)
-            LiveList=c;
+            if(candidateList.size()!=0)
+            {
+            if(candidateList.size()>=3)
+            {
+            LiveList=candidateList;
+            status=1;
+            }
+            else
+            System.out.println("Too Less candidates to conduct election");
+            }
             else
             System.out.println("Voting list Empty");
             break;
@@ -77,70 +124,42 @@ class App{
             a.AdminsVote(LiveList);
             break;
             case 5:
-            DeclareWinner(c);
+            userRegistration.DeclareWinner(candidateList);
             LiveList=null;
+            status=0;
+            candidateList=null;
+            VoterList=null;
+            break;
+            case 6:
+            for(Candidate cand:candidateList)
+            {
+                cand.showCandidateDetails();
+            }
+            break;
+            case 7:
+            a.unblockUid(userRegistration.blockedUids);
             break;
             default:
-                break;
-        }
-        }
-    }
             break;
-            default:
-                break;
+        }
         }
     }
-        
-    }
-
-    static void VoterLogin(List<Users>ls,List<Candidate>c)
-    {
-        System.out.println("Enter your registered UID");
-        String uid=scanner.next();
-        int flag=-1;
-        for(Users u:ls)
-        {
-            if(u.getUserId().equals(uid))
-            {
-                flag=1;
-                break;
-            }
-        }
-        if(flag==0)
-        System.out.println("UID Not Registered");
-        else
-        {
-            System.out.println("Enter Password");
-            String password=scanner.next();
-            int flagForPassword=-1;
-            for(Users u:ls)
-            {
-            if(u.getPassword().equals(password))
-            {
-                System.out.println("Login Succesful!");
-                flagForPassword=0;
-                u.Vote(c);
-                break;
-            }
-        }
-            if(flagForPassword==-1)
-            {
-                System.out.println("Incorrect Password!");
-            }
-        }
-        }
-       static void DeclareWinner(List<Candidate>c)
-        {
-          int max=0;
-          Candidate winner=new Candidate(null, null, 0);
-          for(Candidate candidate:c)
-          {
-            if(candidate.getVoteCount()>max)
-            {
-            winner=candidate;
-            max=candidate.getVoteCount();
-          }
-        }
-          System.out.println("Winner of election is : "+winner.getName()+" with "+winner.getVoteCount()+" votes!");
+    default:
+    break;
+           
         }
     }
+    catch(NegativeNumberException negativeNumberException)
+            {
+                System.err.println(negativeNumberException.getMessage());
+            }
+    }
+}
+catch(InputMismatchException inputMismatchException)
+{
+    System.err.println("Invalid entry , you are trying to enter an invalid input");
+    scanner.nextLine();
+    main(args);
+}  
+    }
+}

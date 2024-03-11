@@ -7,20 +7,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
-import VotingSystem.UserManual.Users;
-class UserManual
-{
 class Users 
 {
 Scanner scanner=new Scanner(System.in);
-private String name,password,uniqueId,dateOfBirth,voteSymbol="null";
-Users(String name,String password,String  uniqueId,String dateOfBirth)
+private String name,password,uniqueId,dateOfBirth,SecretQnAnswer,voteSymbol="null";
+Users(String name,String password,String  uniqueId,String dateOfBirth,String SecretQnAnswer)
 {
     this.name=name;
     this.password=password;
     this.uniqueId=uniqueId;
     this.dateOfBirth=dateOfBirth;
+    this.SecretQnAnswer=SecretQnAnswer;
 }
 void SetPassword(String Password)
 {
@@ -42,6 +39,10 @@ int getAge()
 String getUserId()
 {
     return uniqueId;
+}
+String getSecretQnAnswer()
+{
+    return SecretQnAnswer;
 }
 void setVotingSymbol(String voteSymbol)
 {
@@ -100,7 +101,6 @@ for(Candidate candidate:candidates)
         System.out.println(candidate.getName()+":"+candidate.getVoteCount());
     }
 }
-}
 List<Users>readRegisteredUsers(String filepath) {
     List<Users>registeredUsers=new ArrayList<Users>();
     String csvSplitBy = ",";
@@ -114,7 +114,7 @@ List<Users>readRegisteredUsers(String filepath) {
             String[] data = line.split(csvSplitBy);
 
             // Store data into the map (assuming data[0] is key and data[1] is value)
-            Users user=new Users(data[2],data[1],data[0],data[3]);
+            Users user=new Users(data[2],data[1],data[0],data[3],data[4]);
             registeredUsers.add(user);
         }
     } catch (FileNotFoundException fileNotFoundException) {
@@ -129,6 +129,3 @@ List<Users>readRegisteredUsers(String filepath) {
     return registeredUsers;
 }
 }
-
-
-
