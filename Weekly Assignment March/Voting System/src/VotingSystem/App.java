@@ -185,6 +185,7 @@ class App {
                                                 if (candidateList.size() >= 3) {
                                                     LiveList = candidateList;
                                                     status = 1;
+                                                    System.out.println("Voting is now live");
                                                 } else
                                                     System.out.println("Too Less candidates to conduct election");
                                             } else

@@ -17,7 +17,6 @@ import java.util.Set;
 
 // Class responsible for user registration and management
 public class UserRegistration {
-    // Scanner object for user input
     Scanner scanner = new Scanner(System.in);
 
     // CSVParser object to parse CSV files
@@ -163,8 +162,8 @@ public class UserRegistration {
             } else {
                 System.out.println("Passwords do not Match! Registration not completed");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ioException) {
+            System.err.println("Input Mismatch Exception" );
         }
         return flag;
     }

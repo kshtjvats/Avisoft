@@ -102,15 +102,15 @@ public class Admin { // Declaring a public class named Admin
                     System.out.println("No such user present");
                     return CandidateList; // Returning current candidate list
                 }
-                Candidate cand = new Candidate(user.get(index).getName(), user.get(index).getUserId(), user.get(index).getAge()); // Creating a candidate object
+                Candidate candidate = new Candidate(user.get(index).getName(), user.get(index).getUserId(), user.get(index).getAge()); // Creating a candidate object
                 System.out.println("Enter a voting symbol for this Candidate"); // Prompting admin to enter candidate's voting symbol
                 String symbol = scanner.next(); // Reading admin's input
                 if (!symbolsforVoting.contains(symbol)) // Checking if the entered symbol is valid
                     System.out.println("Choosing an invalid symbol"); // Displaying message for invalid symbol
                 else {
                     if (!takenSymbols.contains(symbol)) { // Checking if the symbol is not already taken
-                        cand.setSymbol(symbol); // Setting candidate's voting symbol
-                        CandidateList.add(cand); // Adding candidate to the candidate list
+                        candidate.setSymbol(symbol); // Setting candidate's voting symbol
+                        CandidateList.add(candidate); // Adding candidate to the candidate list
                         AddedCandidates.add(uid); // Adding UID to the set of added candidates
                         takenSymbols.add(symbol); // Adding symbol to the set of taken symbols
                         System.out.println("Candidate added to voting list"); // Displaying message for successful addition
