@@ -1,9 +1,13 @@
-use dbtest;
+-- Use the database named dbtest
+USE dbtest;
+
+-- Create the SubParent table
 CREATE TABLE SubParent (
     sub_id INT,
     parent_id INT
 );
 
+-- Insert values into the SubParent table
 INSERT INTO SubParent (sub_id, parent_id) VALUES
 (1, NULL),
 (2, NULL),
@@ -17,15 +21,15 @@ INSERT INTO SubParent (sub_id, parent_id) VALUES
 (10, 2),
 (6, 7);
 
-With tab1 as
-(
-SELECT distinct sub_id,parent_id from SubParent p
-where
-parent_id is NULL
+-- Common Table Expression (CTE) to select distinct posts with NULL parent_id (top-level posts)
+WITH tab1 AS (
+    SELECT DISTINCT sub_id, parent_id 
+    FROM SubParent 
+    WHERE parent_id IS NULL
 )
-SELECT distinct t.sub_id as 'post id' ,COUNT(DISTINCT p.sub_id) as 'number of comments' FROM tab1 t
-LEFT JOIN SubParent p
-on t.sub_id=p.parent_id
-group by t.sub_id
 
-
+-- Select the count of comments for each post
+SELECT DISTINCT t.sub_id AS 'post id', COUNT(DISTINCT p.sub_id) AS 'number of comments' 
+FROM tab1 t
+LEFT JOIN SubParent p ON t.sub_id = p.parent_id
+GROUP BY t.sub_id;

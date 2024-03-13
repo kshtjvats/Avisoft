@@ -1,5 +1,7 @@
-Use dbtest;
+-- Use the database named dbtest
+USE dbtest;
 
+-- Create the Friends table
 CREATE TABLE Friends (
     id INT,
     name VARCHAR(255),
@@ -27,18 +29,18 @@ INSERT INTO Activities (id, name) VALUES
 (2, 'Singing'),
 (3, 'Horse Riding');
 
-
-WITH Activitycount AS
-(
-SELECT activity,count(*) AS num 
-FROM friends
-group by activity
+-- Common Table Expression (CTE) to count the number of participants for each activity
+WITH Activity_count AS (
+    SELECT activity, COUNT(*) AS num 
+    FROM Friends
+    GROUP BY activity
 )
-SELECT activity from Activitycount
-where num not in
-(
-SELECT MAX(num) from Activitycount
-union
-SELECT MIN(num) from Activitycount
-);
 
+-- Select activities with neither the maximum nor the minimum number of participants
+SELECT activity 
+FROM Activity_count
+WHERE num NOT IN (
+    SELECT MAX(num) FROM Activity_count 
+    UNION
+    SELECT MIN(num) FROM Activity_count
+);

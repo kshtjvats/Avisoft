@@ -1,9 +1,14 @@
-WITH Activity_count as 
-(
-SELECT activity,count(*) as num from friends
-group by activity
-)
-SELECT activity from Activity_count
-where num not in(SELECT max(num) from Activity_count 
-union
-SELECT min(num) from Activity_count)
+use dbtest;
+CREATE TABLE emails(
+    Id INT,
+    Email VARCHAR(255)
+);
+
+INSERT INTO emails (Id, Email) VALUES (1, 'a@b.com');
+INSERT INTO emails (Id, Email) VALUES (2, 'c@d.com');
+INSERT INTO emails (Id, Email) VALUES (3, 'a@b.com');
+
+SELECT Email
+FROM emails
+GROUP BY Email
+HAVING COUNT(*) > 1;
