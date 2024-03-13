@@ -18,7 +18,7 @@ INSERT INTO my_numbers (num) VALUES
 SELECT 
     num
 FROM
-    my_numbers
+    my_numbers 
 GROUP BY num
 HAVING COUNT(num) = 1
 ORDER BY num DESC
