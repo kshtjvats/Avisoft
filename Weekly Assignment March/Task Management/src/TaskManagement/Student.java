@@ -2,8 +2,10 @@ package TaskManagement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Student {
+    Scanner scanner=new Scanner(System.in);
 private String name,email,password,batch;
 List<Task>myTasks;
 Student(String name,String email,String password,String batch)
@@ -16,6 +18,23 @@ Student(String name,String email,String password,String batch)
 void assignTask(List<Task>Tasks)
 {
     this.myTasks=Tasks;
+}
+void SubmitTask()
+{
+System.out.println("Enter the serial number corresponding to Task");
+int serialNumber=scanner.nextInt();
+if(serialNumber>myTasks.size())
+{
+System.out.println("Task does not exist");
+return;
+}
+else
+{
+    System.out.println("Enter 1 to submit task");
+    int command=scanner.nextInt();
+    if(command==1)
+    myTasks.get(serialNumber).setDoneStatus();
+}
 }
 void showUpcomingWork(List<Task>myTasks)
 {
@@ -34,21 +53,9 @@ void showUpcomingWork(List<Task>myTasks)
         }
         for(Task t:upcoming)
         {
-            t.oneMinuteCalculate();
+        Thread oneMinuteThread = new Thread(() -> t.oneMinuteCalculate());
+        oneMinuteThread.start();
         }
     }
 }
 }
-class Main
-    {
-        public static void main(String[] args) {
-            List<Task>tasks=new ArrayList<Task>();
-            Task t=new Task("Task1","14 March 2024 4:29 PM");
-            tasks.add(t);
-            Task t2=new Task("Task2","14 March 2024 4:30 PM");
-            tasks.add(t2);
-            Student s=new Student("Kshitij","kshtij.vats@avisoft.io","hiKv","java");
-            s.showUpcomingWork(tasks);
-        }
-    }
-
