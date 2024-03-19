@@ -20,7 +20,10 @@ public class Student {
         this.password = password;
         this.batch = batch;
     }
-
+    void setBatch(String batch)
+    {
+        this.batch=batch;
+    }
     // Getter methods for student details
     String getName() {
         return name;
@@ -41,10 +44,12 @@ public class Student {
     // Method for submitting a task
     void SubmitTask() {
         if (myTasks.size() != 0) {
+            try{
+            counter=1;
             // Display tasks available for submission
             for (Task task : myTasks) {
                 System.out.println("***************");
-                System.out.println("Serial Number : " + (counter + 1));
+                System.out.println("Serial Number : " + (counter++));
                 System.out.println("Task Title : " + task.getTaskTitle());
                 System.out.println("Task Deadline : " + task.getDeadline());
                 System.out.println("****************");
@@ -61,11 +66,16 @@ public class Student {
                 if (command == 1) {
                     // Mark task as done and remove from current tasks
                     myTasks.get(serialNumber - 1).setDoneStatus();
-                    System.out.println("Task Done");
-                    myTasks.remove(myTasks.get(serialNumber - 1));
+                    System.out.println(myTasks.get(serialNumber-1).getTaskTitle()+" Done");
                 }
             }
-        } else
+        }
+        catch(IndexOutOfBoundsException indexOutOfBoundsException)
+        {
+            System.out.println("Invalid entry");
+            return;
+        }
+     } else
             System.out.println("No tasks to submit");
     }
 
@@ -92,8 +102,8 @@ public class Student {
                 }
             }
             // Start a new thread for each upcoming task to calculate one minute
-            for (Task t : upcoming) {
-                Thread oneMinuteThread = new Thread(() -> t.oneMinuteCalculate());
+            for (Task task : upcoming) {
+                Thread oneMinuteThread = new Thread(() -> task.oneMinuteCalculate());
                 oneMinuteThread.start();
             }
         }
