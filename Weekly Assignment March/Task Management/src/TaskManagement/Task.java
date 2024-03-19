@@ -4,24 +4,36 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 class Task {
-    private String title, deadline;
+    private String title, deadline,subject;
     private boolean isDone = false;
-
+    boolean missed=false;
+    boolean running=true;
     // Constructor
-    Task(String title, String deadline) {
+    Task(String title, String deadline,String subject) {
         this.title = title;
         this.deadline = deadline;
+        this.subject=subject;
     }
 
     // Setter methods
     void setTitle(String title) {
         this.title = title;
     }
-
+    String getTaskSubject()
+    {
+        return subject;
+    }
     void setDeadline(String deadline) {
         this.deadline = deadline;
     }
-
+    void setMissed()
+    {
+        this.missed=true;
+    }
+    boolean getMissedStatus()
+    {
+    return this.missed;
+    }
     // Getter methods
     String getTaskTitle() {
         return title;
@@ -30,7 +42,6 @@ class Task {
     String getDeadline() {
         return deadline;
     }
-
     // Method to mark task as done
     void setDoneStatus() {
         this.isDone = true;
@@ -51,7 +62,7 @@ class Task {
 
     // Method to calculate deadline
     int deadlineCalculator() {
-        String input = getDeadline();
+        String input = this.getDeadline();
         LocalDateTime inputDateTime = parseDateTime(input);
         LocalDateTime currentDateTime = LocalDateTime.now();
         int comparisonResult = compareDateTime(inputDateTime, currentDateTime);  
@@ -71,8 +82,8 @@ class Task {
 
     // Method to continuously check if 1 minute left until deadline
     void oneMinuteCalculate() {
-        while (true) {
-            String input = getDeadline();
+        while (running) {
+            String input = this.getDeadline();
             int flag = 0;
             LocalDateTime inputDateTime = parseDateTime(input);
             LocalDateTime currentDateTime = LocalDateTime.now();
@@ -100,15 +111,16 @@ class Task {
                 Thread.currentThread().interrupt();
                 return; // Exit the thread
             }
+            if(this.getStatus()==true)
+            break;
         }
     }
-
     // Method to parse date and time from string
     public static LocalDateTime parseDateTime(String input) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM uuuu h:mm a");
         try {
             return LocalDateTime.parse(input, formatter);
-        } catch (Exception e) {
+        } catch (Exception exception) {
             return null;
         }
     }
@@ -117,4 +129,5 @@ class Task {
     public static int compareDateTime(LocalDateTime dateTime1, LocalDateTime dateTime2) {
         return dateTime1.compareTo(dateTime2);
     }
+    
 }
